@@ -6,6 +6,8 @@ import { AuthsModule } from './auths/auths.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { typeORMConfig } from './configs/typeorm.config';
+import { VocabularyModule } from './vocabulary/vocabulary.module';
+import { EtcModule } from './etc/etc.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { typeORMConfig } from './configs/typeorm.config';
     ConfigModule.forRoot(),
     UsersModule,
     AuthsModule,
+    VocabularyModule,
+    EtcModule,
   ],
   controllers: [AppController],
   providers: [AppService],

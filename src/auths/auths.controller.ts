@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { AuthsService } from './auths.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -24,10 +25,19 @@ export class AuthsController {
     return this.authsService.savetest();
   }
   @Get()
+  findName(@Query() query: any) {
+    const name = query.name;
+
+    if (name) {
+      return this.authsService.findName(name);
+    } else {
+      return this.authsService.findAll();
+    }
+  }
+  @Get()
   findAll() {
     return this.authsService.findAll();
   }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.authsService.findOne(+id);
@@ -42,6 +52,4 @@ export class AuthsController {
   remove(@Param('id') id: string) {
     return this.authsService.remove(+id);
   }
-
-  
 }

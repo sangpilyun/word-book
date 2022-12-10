@@ -6,9 +6,12 @@ import {
   ManyToMany,
   JoinColumn,
   Entity,
+  JoinTable,
+  Unique,
 } from 'typeorm';
 
 @Entity()
+@Unique(['id'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
   seq: number;
@@ -36,9 +39,11 @@ export class User extends BaseEntity {
 
   @Column('date', { nullable: true })
   deletedDate: Date;
-  @ManyToMany(() => Authority)
-  @JoinColumn()
-  authoritys: Authority[];
+  @ManyToMany(() => Authority, (autority) => autority.users, {
+    cascade: true,
+  })
+  @JoinTable()
+  authorities: Authority[];
 }
 
 export type Gender = 'M' | 'F';

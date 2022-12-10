@@ -8,7 +8,7 @@ import { Authority } from './entities/authority.entity';
 export class AuthsService {
   constructor(
     @InjectRepository(Authority)
-    private authorityRepository: Repository<Authority>
+    private authorityRepository: Repository<Authority>,
   ) {}
 
   async create(createAuthDto: CreateAuthDto) {
@@ -21,6 +21,9 @@ export class AuthsService {
 
   async findOne(id: number) {
     return await this.authorityRepository.findOneBy({ id });
+  }
+  async findName(name: string) {
+    return await this.authorityRepository.findOneBy({ name });
   }
 
   async update(id: number, updateAuthDto: UpdateAuthDto) {

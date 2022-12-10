@@ -5,10 +5,12 @@ import {
   Column,
   Entity,
   ManyToMany,
-  JoinColumn,
+  Unique,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
+@Unique(['name'])
 export class Authority extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
@@ -16,7 +18,7 @@ export class Authority extends BaseEntity {
   @Column('varchar', { length: 20 })
   name: string;
 
-  @ManyToMany(() => User)
-  @JoinColumn()
-  user: User[];
+  @ManyToMany(() => User, (user) => user.authorities)
+  @JoinTable()
+  users: User[];
 }

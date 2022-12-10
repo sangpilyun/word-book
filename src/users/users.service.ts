@@ -17,22 +17,29 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private authService: AuthsService,
     @InjectRepository(Authority)
     private authorityRespository: Repository<Authority>,
+    private authorityService: AuthsService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { id } = createUserDto;
     const isFound = await this.findOneById(id);
+    const default_auth = process.env.DEFAULT_USER_AUTH;
+    const auth = await this.authorityService.findName(default_auth);
+    console.log(default_auth.length, auth);
 
     if (isFound) {
       throw new BadRequestException(`Duplicate entry ${id}`);
     }
     const user = this.userRepository.create(createUserDto);
     user.createdDate = user.createdDate ? user.createdDate : moment().toDate();
+    if (auth) {
+      user.authorities = [auth];
+    }
 
-    await this.userRepository.save(user);
+    const a = await this.userRepository.save(user);
+
     return user;
   }
 
@@ -74,7 +81,7 @@ export class UsersService {
   }
 
   async savetest() {
-    const auths = await this.authService.findAll();
+    const auths = await this.authorityService.findAll();
     console.log(auths);
     const user = new User();
     user.id = 'test 200';
@@ -84,7 +91,7 @@ export class UsersService {
     user.email = 'zzzz@aver.com';
 
     user.createdDate = moment().toDate();
-    user.authoritys = [...auths];
+    user.authorities = [...auths];
     const aa = await this.userRepository.save(user);
     console.log('user save test finish ', aa);
     return aa;
