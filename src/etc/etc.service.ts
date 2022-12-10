@@ -37,27 +37,3 @@ export class EtcService {
     return result;
   }
 }
-
-/** 
- * data:  {
-  message: {
-    result: {
-      srcLangType: 'en',
-      tarLangType: 'ko',
-      translatedText: '안녕하세요 세계!! 저는 SPY입니다.',
-      engineType: 'N2MT',
-      pivot: null,
-      dict: null,
-      tarDict: null
-    },
-    '@type': 'response',
-    '@service': 'naverservice.nmt.proxy',
-    '@version': '1.0.0'
-  }
- */
-/** 
- * data: {
-      errorCode: 'N2MT04',
-      errorMessage: 'Unsupported target language (지원하지 않는 target 언어입니다.)'
-    }
- */

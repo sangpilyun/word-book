@@ -8,9 +8,6 @@ export class EtcController {
   @Get('translate')
   translate(@Body() body: any) {
     const { source, target, text } = body;
-    console.log('source: ', source);
-    console.log('target: ', target);
-    console.log('text: ', text);
 
     return this.etcService.translate(source, target, text);
   }
