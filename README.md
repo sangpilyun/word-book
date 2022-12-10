@@ -28,10 +28,10 @@
 
 
 @nestjs/axios  
-  axios 통신  
-  HttpModule, HttpService 사용하기 위함  
+　axios 통신  
+　HttpModule, HttpService 사용하기 위함  
 axios  
-  AxiosResponse 객체 사용하기위함  
+　AxiosResponse 객체 사용하기위함  
   
 ```
 npm i --save @nestjs/axios
