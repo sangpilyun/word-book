@@ -4,6 +4,7 @@ import { UpdateAuthDto } from './dto/update-auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Authority } from './entities/authority.entity';
+
 @Injectable()
 export class AuthsService {
   constructor(
@@ -32,15 +33,5 @@ export class AuthsService {
 
   async remove(id: number) {
     return await this.authorityRepository.delete(id);
-  }
-
-  async savetest() {
-    const authority1 = new Authority();
-    authority1.name = '테스트권한1';
-    await this.authorityRepository.save(authority1);
-
-    const authority2 = new Authority();
-    authority2.name = '테스트권한2';
-    return await this.authorityRepository.save(authority2);
   }
 }

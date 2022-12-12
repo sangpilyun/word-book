@@ -19,7 +19,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 16, unique: true })
   id: string;
 
-  @Column('varchar', { length: 20 })
+  @Column('varchar', { length: 72 })
   password: string;
 
   @Column('varchar', { length: 40 })

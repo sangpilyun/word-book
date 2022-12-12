@@ -11,19 +11,18 @@ import {
 import { AuthsService } from './auths.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 
 @Controller('auths')
 export class AuthsController {
   constructor(private readonly authsService: AuthsService) {}
 
+  @UsePipes(ValidationPipe)
   @Post()
   create(@Body() createAuthDto: CreateAuthDto) {
     return this.authsService.create(createAuthDto);
   }
-  @Get('test')
-  savetest() {
-    return this.authsService.savetest();
-  }
+
   @Get()
   findName(@Query() query: any) {
     const name = query.name;

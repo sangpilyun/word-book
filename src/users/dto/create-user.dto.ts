@@ -1,35 +1,59 @@
 import { Gender } from '../entities/user.entity';
-import { Max, Length, IsEmail, IsString, IsDate } from 'class-validator';
+import {
+  Max,
+  Length,
+  IsEmail,
+  IsString,
+  IsDateString,
+  IsEmpty,
+  IsNotEmpty,
+  isEmpty,
+  Matches,
+} from 'class-validator';
 import { Authority } from 'src/auths/entities/authority.entity';
 
 export class CreateUserDto {
+  @IsNotEmpty()
   @IsString()
   @Length(4, 16)
+  @Matches(/^[a-zA-Z0-9]+$/, {
+    message: '아이디는 영문과 숫자만 사용할 수 있습니다.',
+  })
   id: string;
 
+  @IsNotEmpty()
   @IsString()
   @Length(8, 20)
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*)(]+$/, {
+    message: '비밀번호는 하나 이상의 영문과 숫자를 포함해야 합니다.',
+  })
   password: string;
 
+  @IsNotEmpty()
   @IsString()
   @Length(8, 20)
   name: string;
 
+  @IsNotEmpty()
   @IsEmail()
-  @Max(45)
+  @Length(0, 45)
   email: string;
 
+  @IsNotEmpty()
   @IsString()
   @Length(1, 1)
   gender: Gender;
 
+  @IsNotEmpty()
   @IsString()
+  @Matches(/^\d{2,3}-\d{3,4}-\d{4}$/, {
+    message: '전화번호 형식이 올바르지 않습니다.',
+  })
   tel: string;
 
-  @IsDate()
+  @IsDateString({ always: true })
   createdDate: Date;
 
-  @IsDate()
   deletedDate: Date;
 
   authoritys: Authority[];

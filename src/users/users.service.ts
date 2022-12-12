@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  UnauthorizedException
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,6 +12,8 @@ import { User } from './entities/user.entity';
 import * as moment from 'moment';
 import { Authority } from 'src/auths/entities/authority.entity';
 import { AuthsService } from 'src/auths/auths.service';
+import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,18 +30,25 @@ export class UsersService {
     const isFound = await this.findOneById(id);
     const default_auth = process.env.DEFAULT_USER_AUTH;
     const auth = await this.authorityService.findName(default_auth);
-    console.log(default_auth.length, auth);
 
     if (isFound) {
       throw new BadRequestException(`Duplicate entry ${id}`);
     }
+
     const user = this.userRepository.create(createUserDto);
     user.createdDate = user.createdDate ? user.createdDate : moment().toDate();
     if (auth) {
       user.authorities = [auth];
     }
 
-    const a = await this.userRepository.save(user);
+    // 패스워드 암호화
+    const saltOrRounds = Number(process.env.SALT_OR_ROUNDS);
+    console.log(saltOrRounds);
+    const hash = await bcrypt.hash(user.password, saltOrRounds);
+    user.password = hash;
+
+    console.log(user, user.password.length);
+    await this.userRepository.save(user);
 
     return user;
   }
@@ -80,20 +90,14 @@ export class UsersService {
     return await this.userRepository.delete(seq);
   }
 
-  async savetest() {
-    const auths = await this.authorityService.findAll();
-    console.log(auths);
-    const user = new User();
-    user.id = 'test 200';
-    user.password = 'user111';
-    user.name = 'user zz';
+  async login(loginUserDto: LoginUserDto) {
+    const { id, password } = loginUserDto;
+    const user = await this.findOneById(id);
 
-    user.email = 'zzzz@aver.com';
-
-    user.createdDate = moment().toDate();
-    user.authorities = [...auths];
-    const aa = await this.userRepository.save(user);
-    console.log('user save test finish ', aa);
-    return aa;
+    if (user && (await bcrypt.compare(password, user.password))) {
+      return 'login success';
+    } else {
+      throw new UnauthorizedException('Invalid credentials');
+    }
   }
 }

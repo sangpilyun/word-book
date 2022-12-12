@@ -27,6 +27,16 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 
+bcrypt
+@types/bcrypt
+  암호화 모듈
+class-validator
+class-transformer
+  유효성체크 및 트랜스포머 모듈 
+@nestjs/schedule
+  스케쥴링을 위한 모듈
+@types/cron
+  cron 표현식
 @nestjs/axios  
 　axios 통신  
 　HttpModule, HttpService 사용하기 위함  

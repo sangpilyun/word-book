@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { typeORMConfig } from './configs/typeorm.config';
 import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { EtcModule } from './etc/etc.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EtcModule } from './etc/etc.module';
     AuthsModule,
     VocabularyModule,
     EtcModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
