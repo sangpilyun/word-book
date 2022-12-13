@@ -12,10 +12,15 @@ import { AuthsService } from './auths.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { LoginUserDto } from './dto/login-user.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('auths')
 export class AuthsController {
-  constructor(private readonly authsService: AuthsService) {}
+  constructor(
+    private readonly authsService: AuthsService,
+    // private readonly usersService: UsersService,
+  ) {}
 
   @UsePipes(ValidationPipe)
   @Post()
@@ -51,4 +56,19 @@ export class AuthsController {
   remove(@Param('id') id: string) {
     return this.authsService.remove(+id);
   }
+
+  // @UsePipes(ValidationPipe)
+  // @Post('login')
+  // async login(
+  //   @Body() loginUserDto: LoginUserDto,
+  // ): Promise<{ accessToken: string }> {
+  //   const user = await this.authsService.login(loginUserDto);
+  //   console.log(user);
+  //   return user;
+  // }
+
+  // @Get('test')
+  // async test() {
+  //   return await this.authsService.test();
+  // }
 }

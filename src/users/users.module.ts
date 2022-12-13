@@ -10,5 +10,6 @@ import { Authority } from 'src/auths/entities/authority.entity';
   imports: [TypeOrmModule.forFeature([User, Authority])],
   controllers: [UsersController],
   providers: [UsersService, AuthsService],
+  exports: [UsersService],
 })
 export class UsersModule {}

@@ -28,21 +28,29 @@
 
 
 bcrypt
-@types/bcrypt
-  암호화 모듈
-class-validator
-class-transformer
-  유효성체크 및 트랜스포머 모듈 
-@nestjs/schedule
-  스케쥴링을 위한 모듈
-@types/cron
-  cron 표현식
+@types/bcrypt  
+  암호화 모듈  
+class-validator  
+class-transformer  
+  유효성체크 및 트랜스포머 모듈  
+@nestjs/schedule  
+  스케쥴링을 위한 모듈  
+@types/cron  
+  cron 표현식  
 @nestjs/axios  
 　axios 통신  
 　HttpModule, HttpService 사용하기 위함  
 axios  
 　AxiosResponse 객체 사용하기위함  
-  
+@nestjs/jwt  
+  jwt(json web token) 패키지  
+@nestjs/passport  
+  express 공식 사이트에서 추천하는 인증패키지  
+  로그인,로그아웃,접근제한 등에 관련된 라이브러리  
+  네이버, 카카오, 구글 간편로그인에 필요한 기반기술  
+passport  
+passport-jwt  
+
 ```
 npm i --save @nestjs/axios
 
