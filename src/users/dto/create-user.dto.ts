@@ -1,4 +1,4 @@
-import { Gender } from '../entities/user.entity';
+import { Gender } from '../../entities/user.entity';
 import {
   Max,
   Length,
@@ -10,7 +10,7 @@ import {
   isEmpty,
   Matches,
 } from 'class-validator';
-import { Authority } from 'src/auths/entities/authority.entity';
+import { Authority } from 'src/entities/authority.entity';
 
 export class CreateUserDto {
   @IsNotEmpty()

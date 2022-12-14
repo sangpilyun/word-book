@@ -26,7 +26,12 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-
+cheerio  
+  웹 페이지에 있는 데이터를 쉽게 가공할 수 있도록 도와주는 패키지  
+puppeteer  
+  Chrome 혹은 Chromium을 제어하기 위한 API를 제공  
+  Headless Browser로 작동  
+  https://bluayer.com/35  
 bcrypt
 @types/bcrypt  
   암호화 모듈  

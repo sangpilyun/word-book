@@ -1,14 +1,21 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { TranslateDto } from 'src/dto/Translate.dto';
 import { EtcService } from './etc.service';
 
 @Controller('etc')
 export class EtcController {
   constructor(private etcService: EtcService) {}
 
-  @Get('translate')
-  translate(@Body() body: any) {
-    const { source, target, text } = body;
-
-    return this.etcService.translate(source, target, text);
+  @UsePipes(ValidationPipe)
+  @Post('translate')
+  translate(@Body() translateDto: TranslateDto) {
+    return this.etcService.translate(translateDto);
   }
 }

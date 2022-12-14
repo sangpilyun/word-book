@@ -6,6 +6,6 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   username: process.env.DB_USERNAME || 'root',
   password: process.env.DB_PASSWORD || '1234',
   database: process.env.DB_NAME || 'wordbook',
-  entities: [__dirname + '/../**/*.entity.{js, ts}'],
-  synchronize: true,
+  entities: [__dirname + '/../entities/*.entity.{js, ts}'],
+  synchronize: false,
 };

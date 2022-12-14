@@ -1,4 +1,5 @@
-import { Authority } from 'src/auths/entities/authority.entity';
+import { Authority } from 'src/entities/authority.entity';
+// import { Sentence } from 'src/entities/sentence.entity';
 import {
   BaseEntity,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
   Entity,
   JoinTable,
   Unique,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -34,16 +36,21 @@ export class User extends BaseEntity {
   @Column('varchar', { length: 13 })
   tel: string;
 
-  @Column('date')
+  @Column('datetime')
   createdDate: Date;
 
-  @Column('date', { nullable: true })
+  @Column('datetime', { nullable: true })
   deletedDate: Date;
   @ManyToMany(() => Authority, (autority) => autority.users, {
     cascade: true,
   })
   @JoinTable()
   authorities: Authority[];
+
+  // @ManyToOne(() => Sentence, (sentence) => sentence.user, {
+  //   cascade: true,
+  // })
+  // sentences: Sentence[];
 }
 
 export type Gender = 'M' | 'F';
