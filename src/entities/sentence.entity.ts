@@ -13,14 +13,17 @@ export class Sentence extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 1000 })
   sentence: string;
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 1000 })
   translation: string;
 
   @Column('varchar', { length: 20 })
   translator: string;
+
+  @Column('boolean', { default: false })
+  isSearchForWord: boolean;
 
   @CreateDateColumn({ type: 'datetime' })
   createdDate: Date;

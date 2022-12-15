@@ -5,9 +5,9 @@ import {} from 'dotenv/config';
 import * as fs from 'fs';
 
 async function bootstrap() {
-  console.log(__dirname);
-  console.log(typeORMConfig);
-  // https 인증 보류 
+  // console.log(__dirname);
+  // console.log(typeORMConfig);
+  // https 인증 보류
   const httpsOptions = {
     key: '',
     cert: '',

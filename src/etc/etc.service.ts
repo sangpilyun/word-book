@@ -21,16 +21,17 @@ export class EtcService {
     const { source, target } = translateDto;
     let { text } = translateDto;
     const translatedSentences = [];
+    //. 뒤에 공백이 아닌 문자가 온 . 만 빼고 모든 . 체크하는 정규식
 
     //텍스트 문장별로 나누기
     const endMarks = ['.', '?', '!'];
     endMarks.forEach((mark) => {
-      text = text.replace(mark, mark + '\n');
+      text = text.replace(mark + ' ', mark + '\n');
     });
     const sentences = text
-      .replace(/\n$/gm, '')
       .split('\n')
-      .map((sentence) => sentence.trim());
+      .map((sentence) => sentence.trim())
+      .filter((sentence) => sentence.length > 0);
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -65,7 +66,7 @@ export class EtcService {
 
         // 문장 저장 -> @TODO 유저별로 저장
         await this.sentencesService.save({
-          sentence: text,
+          sentence: sentence,
           translation: translatedSentence,
           translator: 'papago',
         });

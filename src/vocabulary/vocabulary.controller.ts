@@ -11,6 +11,7 @@ import { SentencesService } from './sentences.service';
 @Controller('vocabulary')
 export class VocabularyController {
   constructor(private readonly sentencesService: SentencesService) {}
+
   @Post('sentence')
   @UsePipes(ValidationPipe)
   async saveSentence(@Body() createSentenceDto: CreateSentenceDto) {

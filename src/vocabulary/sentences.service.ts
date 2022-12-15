@@ -14,4 +14,21 @@ export class SentencesService {
     const respose = await this.sentenceRepository.save(createSentenceDto);
     return respose;
   }
+
+  async findAll(): Promise<Sentence[]> {
+    return await this.sentenceRepository.find();
+  }
+
+  async findWhere(where: object): Promise<Sentence[]> {
+    return await this.sentenceRepository.findBy(where);
+  }
+
+  async temp() {
+    const where: object = {
+      isSearchForWord: false,
+    };
+    const response = await this.findWhere(where);
+
+    return where;
+  }
 }

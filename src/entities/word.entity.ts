@@ -10,13 +10,17 @@ import { Meaning } from './meaning.entity';
 
 @Entity()
 export class Word extends BaseEntity {
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn({
+    type: 'int',
+    unsigned: true,
+    primaryKeyConstraintName: 'PK_WORD',
+  })
   id: number;
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 20 })
   pronunciation: string;
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 100 })
   sourceUrl: string;
 
   @OneToMany(() => Meaning, (meaning) => meaning.word)

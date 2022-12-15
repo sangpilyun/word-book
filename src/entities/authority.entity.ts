@@ -12,7 +12,11 @@ import {
 @Entity()
 @Unique(['name'])
 export class Authority extends BaseEntity {
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn({
+    type: 'int',
+    unsigned: true,
+    primaryKeyConstraintName: 'PK_AUTHORITY',
+  })
   id: number;
 
   @Column('varchar', { length: 20 })

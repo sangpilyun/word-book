@@ -15,10 +15,14 @@ import {
 @Entity()
 @Unique(['id'])
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn({
+    type: 'int',
+    unsigned: true,
+    primaryKeyConstraintName: 'PK_USER',
+  })
   seq: number;
 
-  @Column({ type: 'varchar', length: 16, unique: true })
+  @Column({ type: 'varchar', length: 16 })
   id: string;
 
   @Column('varchar', { length: 72 })

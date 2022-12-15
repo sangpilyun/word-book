@@ -10,7 +10,11 @@ import { Word } from './word.entity';
 
 @Entity()
 export class Synonym extends BaseEntity {
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn({
+    type: 'int',
+    unsigned: true,
+    primaryKeyConstraintName: 'PK_SYNONYM',
+  })
   id: number;
 
   @ManyToOne(() => Word, (word) => word.synonyms)
