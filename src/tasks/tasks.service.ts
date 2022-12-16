@@ -65,13 +65,22 @@ export class TasksService {
     // console.log(splitSentences);
 
     /** 단어 검색하기 */
-    this.isRunningScraping = true;
-    for (const splitSentence of splitSentences) {
-      for (const word of splitSentence.words) {
-        await sleep(1000);
-        await this.scrapingNaverEnDictionary(word);
-      }
+    // this.isRunningScraping = true;
+    // for (const splitSentence of splitSentences) {
+    //   for (const word of splitSentence.words) {
+    //     await sleep(1000);
+    //     await this.scrapingNaverEnDictionary(word);
+    //   }
+    // }
+    const notsame = 'Node.js server-side developers';
+    const notsameList = notsame.split(' ');
+    const test = 'NestJS is a It and to and of and NestJS a with';
+    const testList = test.split(' ');
+    for (const word of testList) {
+      await sleep(1000);
+      await this.scrapingNaverEnDictionary(word);
     }
+
     this.isRunningScraping = false;
     console.log('크롤링 완료');
   }
@@ -82,6 +91,8 @@ export class TasksService {
       const page = await browser.newPage();
 
       await page.goto(url);
+      /** _id_mobile_ad 요소가 로딩될때까지 대기. 대기 안해주면 로딩 전에 컨텐츠를 받아와서 크롤링 못할때 있음*/
+      await page.waitForSelector('#_id_mobile_ad');
       const html = await page.content();
 
       await browser.close();
@@ -93,19 +104,37 @@ export class TasksService {
   }
 
   async scrapingNaverEnDictionary(word: string): Promise<object> {
+    console.log(__dirname);
+
     const url = process.env.NAVER_EN_DICTIONARY_URL + word;
     const html = await this.getHtml(url);
     const $ = load(html);
-    const isFound = $('#searchPage_entry').length > 0;
-
-    // html 변수 내용 html.html 파일로 저장
-    fs.writeFile('html.html', html, function (err) {
-      if (err) return console.log(err);
-      console.log('Hello World > helloworld.txt');
-    });
+    const fff = $('#searchPage_entry');
+    const isFound = fff.length > 0;
 
     if (!isFound) {
       console.log('찾기 실패', word);
+      console.log(fff.length, fff);
+      // html 변수 내용 html.html 파일로 저장
+      fs.writeFile(
+        `${__dirname}/../../crawlingHtmls/notFoundList/${word}.html`,
+        html,
+        function (err) {
+          if (err) return console.log(err);
+          console.log('Hello World > helloworld.txt');
+        },
+      );
+
+      //word 데이터를 파일이 없으면 새로 만들고 있으면 추가
+      fs.appendFile(
+        `${__dirname}/../../crawlingHtmls/notFoundList/notFound.txt`,
+        word + ' ',
+        function (err) {
+          if (err) return console.log(err);
+          console.log('Hello World > helloworld.txt');
+        },
+      );
+
       return;
     }
 
@@ -123,6 +152,14 @@ export class TasksService {
       word.toLowerCase() === conjuation.toLowerCase();
     if (!isSame) {
       console.log('단어가 다름', word, scrapingWord);
+      fs.appendFile(
+        'notsame.txt',
+        `$[${word}:${scrapingWord}] `,
+        function (err) {
+          if (err) return console.log(err);
+          console.log('Hello World > helloworld.txt');
+        },
+      );
       return;
     }
 
@@ -170,6 +207,16 @@ export class TasksService {
     resultWord.img = imgSrc;
 
     console.log(resultWord);
+
+    // html 변수 내용 html.html 파일로 저장
+    fs.writeFile(
+      `${__dirname}/../../crawlingHtmls/sucessList/${word}.html`,
+      html,
+      function (err) {
+        if (err) return console.log(err);
+        console.log('Hello World > helloworld.txt');
+      },
+    );
 
     return resultWord;
     // 유의어 요소
