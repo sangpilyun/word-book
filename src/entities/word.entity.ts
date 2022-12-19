@@ -3,12 +3,13 @@ import {
   Column,
   Entity,
   OneToMany,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Meaning } from './meaning.entity';
 
 @Entity()
+@Unique(['name'])
 export class Word extends BaseEntity {
   @PrimaryGeneratedColumn({
     type: 'int',
@@ -17,7 +18,10 @@ export class Word extends BaseEntity {
   })
   id: number;
 
-  @Column('varchar', { length: 20 })
+  @Column('varchar', { length: 45 })
+  name: string;
+
+  @Column('varchar', { length: 50 })
   pronunciation: string;
 
   @Column('varchar', { length: 100 })

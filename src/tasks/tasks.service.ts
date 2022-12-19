@@ -4,19 +4,23 @@ import puppeteer from 'puppeteer';
 import { sleep } from 'src/utils/utils';
 import { SentencesService } from 'src/vocabulary/sentences.service';
 import { load } from 'cheerio';
-import * as fs from 'fs';
-import { Sentence } from 'src/entities/sentence.entity';
+import { CreateWordDto } from 'src/dto/create-word.dto';
+import { CreateMeaningDto } from 'src/dto/create-meaning.dto';
+import { VocabularyService } from 'src/vocabulary/vocabulary.service';
 
 @Injectable()
 export class TasksService {
   private isRunningScraping: boolean;
 
-  constructor(private readonly sentencesService: SentencesService) {
+  constructor(
+    private readonly sentencesService: SentencesService,
+    private readonly vocabulariesService: VocabularyService,
+  ) {
     this.isRunningScraping = false;
   }
 
-  // @Cron(CronExpression.EVERY_MINUTE, { name: 'scrapingNaverEnDictionary' })
-  @Cron(CronExpression.EVERY_10_SECONDS, { name: 'scrapingNaverEnDictionary' })
+  // @Cron(CronExpression.EVERY_10_SECONDS, { name: 'scrapingNaverEnDictionary' })
+  @Cron(CronExpression.EVERY_MINUTE, { name: 'scrapingNaverEnDictionary' })
   async handleCrawlingWord() {
     if (this.isRunningScraping) {
       console.log('이미 실행중입니다.');
@@ -25,55 +29,71 @@ export class TasksService {
 
     //puppeteer로 크롤링해서 단어 저장하는 스케줄러
 
-    /** 단어를 검색하지 않은 문장들 가져오기 */
-    const where: object = {
-      isSearchForWord: false,
-    };
-    const sentences = await this.sentencesService.findWhere(where);
-    console.log(sentences);
-
-    /** 문장을 각각 단어로 분할하기 */
-    const splitSentences = sentences.map((sentenceObj) => {
-      const sentence = sentenceObj.sentence;
-      const words = sentence.split(' ');
-
-      // 단어 연결문자 리스트
-      const wordConnectorList = ['-', "'", '.'];
-      for (const wordConnector of wordConnectorList) {
-        for (const i in words) {
-          const startReg = new RegExp(`^\\${wordConnector}`);
-          const endReg = new RegExp(`\\${wordConnector}$`);
-          const word = words[i].replace(startReg, '').replace(endReg, '');
-          words[i] = word;
-        }
-      }
-
-      for (const i in words) {
-        const word = words[i];
-        const wordReg = new RegExp(
-          `[^a-zA-Z\\${wordConnectorList.join('\\')}]`,
-          'g',
-        );
-
-        words[i] = word.replace(wordReg, '');
-      }
-
-      return {
-        ...sentenceObj,
-        words: words.filter((word) => word.length > 0),
+    try {
+      /** 단어를 검색하지 않은 문장들 가져오기 */
+      const where: object = {
+        isSearchForWord: false,
       };
-    });
+      const sentences = await this.sentencesService.findWhere(where);
+      this.isRunningScraping = true;
 
-    /** 단어 검색하기 */
-    this.isRunningScraping = true;
-    for (const splitSentence of splitSentences) {
-      for (const word of splitSentence.words) {
-        await sleep(1000);
-        await this.scrapingNaverEnDictionary(word);
+      /** 문장 각각 크롤링 실행 */
+      for (const sentenceObj of sentences) {
+        const sentence = sentenceObj.sentence;
+        const words = sentence.split(' ');
+
+        // 단어 연결문자 리스트
+        const wordConnectorList = ['-', "'", '.'];
+        for (const wordConnector of wordConnectorList) {
+          for (const i in words) {
+            const startReg = new RegExp(`^\\${wordConnector}`);
+            const endReg = new RegExp(`\\${wordConnector}$`);
+            const word = words[i].replace(startReg, '').replace(endReg, '');
+            words[i] = word;
+          }
+        }
+
+        for (const i in words) {
+          const word = words[i];
+          const wordReg = new RegExp(
+            `[^a-zA-Z\\${wordConnectorList.join('\\')}]`,
+            'g',
+          );
+
+          words[i] = word.replace(wordReg, '');
+        }
+
+        /** 단어 검색하기 */
+        for (const word of words.filter((word) => word.length > 0)) {
+          const isFound = await this.vocabulariesService.findOneWordByName(
+            word,
+          );
+
+          if (isFound) {
+            continue;
+          }
+
+          await sleep(1000);
+          const createWordDto = await this.scrapingNaverEnDictionary(word);
+
+          if (createWordDto) {
+            /** 단어 DB에 저장 */
+            const response = await this.vocabulariesService.save(createWordDto);
+            console.log('단어 저장', response);
+          }
+        }
+
+        /** 문장 DB에 단어 검색 완료 표시 */
+        await this.sentencesService.update(sentenceObj.id, {
+          isSearchForWord: true,
+        });
       }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.isRunningScraping = false;
     }
 
-    this.isRunningScraping = false;
     console.log('크롤링 완료');
   }
 
@@ -95,7 +115,7 @@ export class TasksService {
     }
   }
 
-  async scrapingNaverEnDictionary(word: string): Promise<object> {
+  async scrapingNaverEnDictionary(word: string): Promise<CreateWordDto> {
     const url = process.env.NAVER_EN_DICTIONARY_URL + word;
     const html = await this.getHtml(url);
     const $ = load(html);
@@ -132,13 +152,11 @@ export class TasksService {
       '#searchPage_entry > div > div:nth-child(1) > ul > li ',
     );
 
-    const resultWord = {
-      name: scrapingWord,
-      meanings: [],
-      pronunciation: '',
-      img: null,
-      sourceUrl: url,
-    };
+    const resultWord = new CreateWordDto();
+    resultWord.name = scrapingWord;
+    resultWord.sourceUrl = url;
+    resultWord.meanings = [];
+    resultWord.pronunciation = '';
 
     // listEl
     meaingListEl.each((index, el) => {
@@ -151,11 +169,10 @@ export class TasksService {
           $(e).find('span.mark').remove();
         });
 
-      const mean = {
-        priority: priority,
-        partOfSpeech: partOfSpeech,
-        meaning: meaning.text().trim(),
-      };
+      const mean = new CreateMeaningDto();
+      mean.priority = priority;
+      mean.partOfSpeech = partOfSpeech;
+      mean.meaning = meaning.text().trim();
 
       resultWord.meanings.push(mean);
     });
@@ -170,7 +187,8 @@ export class TasksService {
     const imgSrc = await $(
       '#searchPage_entry > div > div:nth-child(1) > div.thumb_wrap > div > div > a > img',
     ).attr('src');
-    resultWord.img = imgSrc;
+    // resultWord.img = imgSrc;
+    const img = imgSrc;
 
     console.log(resultWord);
 
