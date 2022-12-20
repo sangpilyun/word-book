@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class TranslateDto {
   @IsNotEmpty()
@@ -15,4 +21,8 @@ export class TranslateDto {
   @IsString()
   @Length(1, 5000)
   text: string;
+
+  @IsOptional()
+  @IsNumber()
+  userSeq: number | null;
 }

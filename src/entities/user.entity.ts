@@ -1,5 +1,5 @@
 import { Authority } from 'src/entities/authority.entity';
-// import { Sentence } from 'src/entities/sentence.entity';
+import { Sentence } from 'src/entities/sentence.entity';
 import {
   BaseEntity,
   PrimaryGeneratedColumn,
@@ -10,6 +10,7 @@ import {
   JoinTable,
   Unique,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -51,10 +52,10 @@ export class User extends BaseEntity {
   @JoinTable()
   authorities: Authority[];
 
-  // @ManyToOne(() => Sentence, (sentence) => sentence.user, {
-  //   cascade: true,
-  // })
-  // sentences: Sentence[];
+  @OneToMany(() => Sentence, (sentence) => sentence.user, {
+    cascade: true,
+  })
+  sentences: Sentence[];
 }
 
 export type Gender = 'M' | 'F';

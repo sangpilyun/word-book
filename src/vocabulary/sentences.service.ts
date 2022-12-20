@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSentenceDto } from 'src/dto/create-sentence.dto';
 import { UpdateSentenceDto } from 'src/dto/update-sentence.dto';
 import { Sentence } from 'src/entities/sentence.entity';
+import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -10,8 +11,21 @@ export class SentencesService {
   constructor(
     @InjectRepository(Sentence)
     private readonly sentenceRepository: Repository<Sentence>,
+    private readonly usersService: UsersService,
   ) {}
   async save(createSentenceDto: CreateSentenceDto): Promise<Sentence> {
+    const user = await this.usersService.findOne(createSentenceDto.userSeq);
+
+    if (!user) {
+      throw new Error('sentence save error: user not found');
+    }
+
+    const sentence = new Sentence();
+    sentence.user = user;
+    sentence.sentence = createSentenceDto.sentence;
+    sentence.translation = createSentenceDto.translation;
+    sentence.translator = createSentenceDto.translator;
+
     const respose = await this.sentenceRepository.save(createSentenceDto);
     return respose;
   }

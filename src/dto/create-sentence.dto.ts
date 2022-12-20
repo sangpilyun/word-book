@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 
 export class CreateSentenceDto {
   @IsNotEmpty()
@@ -14,4 +14,7 @@ export class CreateSentenceDto {
   @IsString()
   @Length(1, 20)
   translator: string;
+
+  @IsNumber()
+  userSeq: number;
 }

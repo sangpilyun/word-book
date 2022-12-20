@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -28,6 +29,11 @@ export class Sentence extends BaseEntity {
   @CreateDateColumn({ type: 'datetime' })
   createdDate: Date;
 
-  // @ManyToOne(() => User, (user) => user.sentences)
-  // user: User;
+  @ManyToOne(() => User, (user) => user.sentences, { nullable: false })
+  @JoinColumn({
+    name: 'userSeq',
+    referencedColumnName: 'seq',
+    foreignKeyConstraintName: 'FK_SENTENCE',
+  })
+  user: User;
 }

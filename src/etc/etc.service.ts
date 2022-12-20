@@ -18,10 +18,9 @@ export class EtcService {
 
   async translate(translateDto: TranslateDto): Promise<string> {
     const queryRunner = this.dataSource.createQueryRunner();
-    const { source, target } = translateDto;
+    const { source, target, userSeq } = translateDto;
     let { text } = translateDto;
     const translatedSentences = [];
-    //. 뒤에 공백이 아닌 문자가 온 . 만 빼고 모든 . 체크하는 정규식
 
     //텍스트 문장별로 나누기
     const endMarks = ['.', '?', '!'];
@@ -64,12 +63,17 @@ export class EtcService {
         const translatedSentence = message.result.translatedText;
         translatedSentences.push(translatedSentence);
 
-        // 문장 저장 -> @TODO 유저별로 저장
-        await this.sentencesService.save({
-          sentence: sentence,
-          translation: translatedSentence,
-          translator: 'papago',
-        });
+        // 로그인한 사용자일 경우 DB에 저장
+        console.log('userSeq: ', userSeq, typeof userSeq);
+
+        if (userSeq) {
+          await this.sentencesService.save({
+            sentence: sentence,
+            translation: translatedSentence,
+            translator: 'papago',
+            userSeq: userSeq,
+          });
+        }
       }
 
       // 트랜잭션 커밋
