@@ -64,8 +64,6 @@ export class EtcService {
         translatedSentences.push(translatedSentence);
 
         // 로그인한 사용자일 경우 DB에 저장
-        console.log('userSeq: ', userSeq, typeof userSeq);
-
         if (userSeq) {
           await this.sentencesService.save({
             sentence: sentence,

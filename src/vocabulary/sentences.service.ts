@@ -26,8 +26,12 @@ export class SentencesService {
     sentence.translation = createSentenceDto.translation;
     sentence.translator = createSentenceDto.translator;
 
-    const respose = await this.sentenceRepository.save(createSentenceDto);
+    const respose = await this.sentenceRepository.save(sentence);
     return respose;
+  }
+
+  async findOne(id: number): Promise<Sentence> {
+    return await this.sentenceRepository.findOne({ where: { id } });
   }
 
   async findAll(): Promise<Sentence[]> {

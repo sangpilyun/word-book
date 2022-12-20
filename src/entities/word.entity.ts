@@ -7,6 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Meaning } from './meaning.entity';
+import { UserWord } from './user-word.entity';
 
 @Entity()
 @Unique(['name'])
@@ -32,4 +33,7 @@ export class Word extends BaseEntity {
 
   @OneToMany(() => Meaning, (meaning) => meaning.word)
   synonyms: Meaning[];
+
+  @OneToMany(() => UserWord, (userWord) => userWord.word)
+  userWords: UserWord[];
 }

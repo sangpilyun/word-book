@@ -23,7 +23,7 @@ export class Sentence extends BaseEntity {
   @Column('varchar', { length: 20 })
   translator: string;
 
-  @Column('boolean', { default: false })
+  @Column({ type: 'boolean', default: false })
   isSearchForWord: boolean;
 
   @CreateDateColumn({ type: 'datetime' })

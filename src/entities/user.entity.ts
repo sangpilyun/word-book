@@ -11,7 +11,10 @@ import {
   Unique,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
+import { UserWord } from './user-word.entity';
 
 @Entity()
 @Unique(['id'])
@@ -41,11 +44,12 @@ export class User extends BaseEntity {
   @Column('varchar', { length: 13 })
   tel: string;
 
-  @Column('datetime')
+  @CreateDateColumn({ type: 'datetime' })
   createdDate: Date;
 
-  @Column('datetime', { nullable: true })
+  @DeleteDateColumn({ type: 'datetime' })
   deletedDate: Date;
+
   @ManyToMany(() => Authority, (autority) => autority.users, {
     cascade: true,
   })
@@ -56,6 +60,9 @@ export class User extends BaseEntity {
     cascade: true,
   })
   sentences: Sentence[];
+
+  @OneToMany(() => UserWord, (userWord) => userWord.user, { cascade: true })
+  userWords: UserWord[];
 }
 
 export type Gender = 'M' | 'F';

@@ -1,35 +1,105 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateMeaningDto } from 'src/dto/create-meaning.dto';
+import { CreateUserWordDto } from 'src/dto/create-user-word.dto';
 import { CreateWordDto } from 'src/dto/create-word.dto';
+import { UpdateUserWordDto } from 'src/dto/update-user-word.dto';
 import { Meaning } from 'src/entities/meaning.entity';
+import { UserWord } from 'src/entities/user-word.entity';
 import { Word } from 'src/entities/word.entity';
+import { UsersService } from 'src/users/users.service';
 import { DataSource } from 'typeorm';
 
 @Injectable()
 export class VocabularyService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly usersService: UsersService,
+  ) {}
 
-  async findOneWordByName(name: string) {
-    return await this.dataSource.manager.findOneBy(Word, { name });
+  async findOneUserWord(userSeq: number, wordId: number) {
+    return await this.dataSource.manager.findOne(UserWord, {
+      where: { user: { seq: userSeq }, word: { id: wordId } },
+      relations: ['user', 'word'],
+    });
   }
+  async saveUserWord(createUserWordDto: CreateUserWordDto) {
+    const user = await this.usersService.findOne(createUserWordDto.userId);
+    const word = await this.findOne(createUserWordDto.wordId);
 
-  async findOneMeaningByMeaing(meaning: string) {
-    return await this.dataSource.manager.findOneBy(Meaning, { meaning });
-  }
+    if (!user) {
+      throw new BadRequestException('userWord save error: user not found');
+    }
 
-  async save(createWordDto: CreateWordDto): Promise<CreateWordDto> {
-    /** @TODO
-     * 병렬로 save 메소드 실행시킬경우, transaction이 안되는 문제가 있음.
-     * 왜? rollback을 두번 실행했음
-     * 해결방법? save 외부에서 트랜잭션을 설정해서 처리하는 방법이 있을것으로 보임.
-     * */
+    if (!word) {
+      throw new BadRequestException('userWord save error: word not found');
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      let word = new Word();
+      const oldUserWord = await this.findOneUserWord(user.seq, word.id);
+      if (oldUserWord) {
+        const updateUserWordDto = new UpdateUserWordDto();
+        updateUserWordDto.searchCount = oldUserWord.searchCount + 1;
+
+        console.log(updateUserWordDto, 'updateUserWordDto');
+        const a = await this.updateUserWord(oldUserWord.id, updateUserWordDto);
+        console.log(oldUserWord, '이미 있는 단어 카운트 추가');
+        return a;
+      }
+
+      const userWord = new UserWord();
+      userWord.user = user;
+      userWord.word = word;
+      console.log(oldUserWord, 'isUserWord');
+
+      await queryRunner.manager.save(userWord);
+      await queryRunner.commitTransaction();
+
+      return userWord;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(err);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async updateUserWord(id: number, updateUserWordDto: UpdateUserWordDto) {
+    return await this.dataSource.manager.update(
+      UserWord,
+      id,
+      updateUserWordDto,
+    );
+  }
+  async findOne(id: number): Promise<Word> {
+    return await this.dataSource.manager.findOne(Word, {
+      where: { id },
+      relations: ['meanings'],
+    });
+  }
+  async findOneWordByName(name: string) {
+    return await this.dataSource.manager.findOne(Word, {
+      where: { name },
+      relations: ['meanings'],
+    });
+  }
+
+  async findOneMeaningByMeaing(meaning: string) {
+    return await this.dataSource.manager.findOneBy(Meaning, { meaning });
+  }
+
+  async save(createWordDto: CreateWordDto): Promise<Word> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    let word = new Word();
+
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
       const { name, pronunciation, sourceUrl } = createWordDto;
       const isFoundWord = await this.findOneWordByName(name);
       if (!isFoundWord) {
@@ -58,20 +128,22 @@ export class VocabularyService {
         newMeaning.priority = meaning.priority;
         newMeaning.word = word;
         meanings.push(newMeaning);
+        console.log(newMeaning, 'newMeaning');
       }
 
       for (const meaning of meanings) {
         await queryRunner.manager.save(meaning);
       }
 
-      await queryRunner.commitTransaction();
+      word.meanings = meanings;
 
-      return createWordDto;
+      await queryRunner.commitTransaction();
     } catch (err) {
       console.log(err);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
+      return word;
     }
   }
 }

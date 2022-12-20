@@ -7,6 +7,7 @@ import { load } from 'cheerio';
 import { CreateWordDto } from 'src/dto/create-word.dto';
 import { CreateMeaningDto } from 'src/dto/create-meaning.dto';
 import { VocabularyService } from 'src/vocabulary/vocabulary.service';
+import { CreateUserWordDto } from 'src/dto/create-user-word.dto';
 
 @Injectable()
 export class TasksService {
@@ -63,13 +64,24 @@ export class TasksService {
           words[i] = word.replace(wordReg, '');
         }
 
+        // @TODO 이미 있는 단어 검색카운트 증가시 일부 단어는 증가 안되는 문제 있음
         /** 단어 검색하기 */
         for (const word of words.filter((word) => word.length > 0)) {
+          const createUserWordDto = new CreateUserWordDto();
           const isFound = await this.vocabulariesService.findOneWordByName(
             word,
           );
 
           if (isFound) {
+            createUserWordDto.userId = 1; //임시
+            createUserWordDto.wordId = isFound.id;
+
+            /** 유저 단어장에 추가 */
+            const res = await this.vocabulariesService.saveUserWord(
+              createUserWordDto,
+            );
+            console.log('유저 단어장에 추가', res);
+
             continue;
           }
 
@@ -78,8 +90,18 @@ export class TasksService {
 
           if (createWordDto) {
             /** 단어 DB에 저장 */
-            const response = await this.vocabulariesService.save(createWordDto);
-            console.log('단어 저장', response);
+            const responseWord = await this.vocabulariesService.save(
+              createWordDto,
+            );
+            console.log('단어 저장', word);
+
+            createUserWordDto.userId = 1; //임시
+            createUserWordDto.wordId = responseWord.id;
+            /** 유저 단어장에 추가 */
+            const res = await this.vocabulariesService.saveUserWord(
+              createUserWordDto,
+            );
+            console.log('유저 단어장에 추가', res);
           }
         }
 
