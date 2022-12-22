@@ -4,32 +4,29 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import * as moment from 'moment';
-import { Authority } from 'src/entities/authority.entity';
-import { AuthsService } from 'src/auths/auths.service';
 import * as bcrypt from 'bcrypt';
-import { LoginUserDto } from './dto/login-user.dto';
+import { LoginUserDto } from '../dto/login-user.dto';
+import { AuthorizationService } from './authorization/authorization.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Authority)
-    private authorityRespository: Repository<Authority>,
-    private authorityService: AuthsService,
+    private authorizationService: AuthorizationService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { id } = createUserDto;
     const isFound = await this.findOneById(id);
     const default_auth = process.env.DEFAULT_USER_AUTH;
-    const auth = await this.authorityService.findName(default_auth);
+    const auth = await this.authorizationService.findName(default_auth);
 
     if (isFound) {
       throw new BadRequestException(`Duplicate entry ${id}`);

@@ -17,7 +17,7 @@ import {
 import { UserWord } from './user-word.entity';
 
 @Entity()
-@Unique(['id'])
+@Unique(['id', 'email'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn({
     type: 'int',

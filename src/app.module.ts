@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { AuthsModule } from './auths/auths.module';
+import { AuthenticationModule } from './authentication/authentication.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { typeORMConfig } from './configs/typeorm.config';
@@ -15,7 +15,7 @@ import { TasksModule } from './tasks/tasks.module';
     TypeOrmModule.forRoot(typeORMConfig),
     ConfigModule.forRoot(),
     UsersModule,
-    AuthsModule,
+    AuthenticationModule,
     VocabularyModule,
     EtcModule,
     TasksModule,
