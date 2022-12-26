@@ -49,6 +49,10 @@ class-transformer
 　HttpModule, HttpService 사용하기 위함  
 axios  
 　AxiosResponse 객체 사용하기위함  
+```
+npm i --save @nestjs/axios
+
+```  
 @nestjs/jwt  
   jwt(json web token) 패키지  
 @nestjs/passport  
@@ -58,10 +62,15 @@ axios
 passport  
 passport-jwt  
 
+nodemailer
+@types/nodemailer
+  테스트용 이메일 모듈
+  상용서비스에는 적용x !
 ```
-npm i --save @nestjs/axios
+npm i nodemailer
+npm i @types/nodemailer --save-dev
+```
 
-```
 
 
 ## Installation

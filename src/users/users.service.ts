@@ -13,6 +13,7 @@ import * as moment from 'moment';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { AuthorizationService } from './authorization/authorization.service';
+import { EmailService } from './email.service';
 
 @Injectable()
 export class UsersService {
@@ -20,9 +21,21 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private authorizationService: AuthorizationService,
+    private emailService: EmailService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    console.log(process.env.MAIL_USERNAME, process.env.MAIL_PASSWORD);
+
+    // const email1 = 'studysw60@naver.com';
+    // const tmepToken1 = '1234567890';
+    // const token1 = await this.emailService.sendMemberJoinVertification(
+    //   email1,
+    //   tmepToken1,
+    // );
+    // console.log(token1);
+
+    // return;
     const { id } = createUserDto;
     const isFound = await this.findOneById(id);
     const default_auth = process.env.DEFAULT_USER_AUTH;
@@ -46,6 +59,18 @@ export class UsersService {
 
     console.log(user, user.password.length);
     await this.userRepository.save(user);
+
+    // @@TODO: 인증 메일 발송기능 구현
+    // 임시 인증 메일 발송
+    const { email, tmepToken } = {
+      email: user.email,
+      tmepToken: '1234567890',
+    };
+    const token = await this.emailService.sendMemberJoinVertification(
+      email,
+      tmepToken,
+    );
+    console.log(token);
 
     return user;
   }

@@ -12,7 +12,7 @@ import { AuthenticationService } from './authentication.service';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { LoginUserDto } from '../dto/login-user.dto';
 
-@Controller('auths')
+@Controller('auth')
 export class AuthenticationController {
   constructor(private readonly authsService: AuthenticationService) {}
 
@@ -26,8 +26,9 @@ export class AuthenticationController {
     return user;
   }
 
-  // @Get('test')
-  // async test() {
-  //   return await this.authsService.test();
-  // }
+  @Get('verify-email')
+  verifyEmail(@Query('token') token: string) {
+    // @@TODO: verify email 구현
+    console.log(token);
+  }
 }
