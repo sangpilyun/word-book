@@ -26,52 +26,6 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-cheerio  
-  nodejs에서 jQuery처럼 요소를 조작할수 있게 해주는 모듈  
-  웹 페이지에 있는 데이터를 쉽게 가공할 수 있도록 도와주는 패키지  
-puppeteer  
-puppeteer-core
-  Chrome 혹은 Chromium을 제어하기 위한 API를 제공  
-  Headless Browser로 작동  
-  https://bluayer.com/35  
-bcrypt
-@types/bcrypt  
-  암호화 모듈  
-class-validator  
-class-transformer  
-  유효성체크 및 트랜스포머 모듈  
-@nestjs/schedule  
-  스케쥴링을 위한 모듈  
-@types/cron  
-  cron 표현식  
-@nestjs/axios  
-　axios 통신  
-　HttpModule, HttpService 사용하기 위함  
-axios  
-　AxiosResponse 객체 사용하기위함  
-```
-npm i --save @nestjs/axios
-
-```  
-@nestjs/jwt  
-  jwt(json web token) 패키지  
-@nestjs/passport  
-  express 공식 사이트에서 추천하는 인증패키지  
-  로그인,로그아웃,접근제한 등에 관련된 라이브러리  
-  네이버, 카카오, 구글 간편로그인에 필요한 기반기술  
-passport  
-passport-jwt  
-
-nodemailer
-@types/nodemailer
-  테스트용 이메일 모듈
-  상용서비스에는 적용x !
-```
-npm i nodemailer
-npm i @types/nodemailer --save-dev
-```
-
-
 
 ## Installation
 
