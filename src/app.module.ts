@@ -13,7 +13,12 @@ import { TasksModule } from './tasks/tasks.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeORMConfig),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath:
+        process.env.NODE_ENV === 'development'
+          ? '.env.development'
+          : '.env.production',
+    }),
     UsersModule,
     AuthenticationModule,
     VocabularyModule,
