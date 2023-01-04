@@ -16,6 +16,32 @@ export class VocabularyService {
     private readonly usersService: UsersService,
   ) {}
 
+  async findAllWords(userSeq, offset, limit) {
+    return await this.dataSource.manager.find(UserWord, {
+      relations: ['word', 'word.meanings'],
+      skip: offset,
+      take: limit,
+      where: {
+        user: { seq: userSeq },
+      },
+    });
+  }
+  async findCardTestWords(userId: number, count: number) {
+    const days = [0, 1, 3, 6, 29];
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    queryRunner.connect();
+    queryRunner.startTransaction();
+    try {
+      const words = await queryRunner.manager.find(Word, {
+        relations: ['user_word'],
+
+        // where: { meanings: { isCardTest: true } },
+        take: count,
+      });
+    } catch (error) {}
+  }
+
   async findOneUserWord(userSeq: number, wordId: number) {
     return await this.dataSource.manager.findOne(UserWord, {
       where: { user: { seq: userSeq }, word: { id: wordId } },

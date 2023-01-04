@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -9,6 +9,7 @@ import { typeORMConfig } from './configs/typeorm.config';
 import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { EtcModule } from './etc/etc.module';
 import { TasksModule } from './tasks/tasks.module';
+import { InterceptorModule } from './interceptor/interceptor.module';
 
 @Module({
   imports: [
@@ -24,8 +25,19 @@ import { TasksModule } from './tasks/tasks.module';
     VocabularyModule,
     EtcModule,
     TasksModule,
+    InterceptorModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Logger],
 })
 export class AppModule {}
+
+// 특정모듈에 미들웨어 적용
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer): any {
+//     consumer
+//       .apply(LoggerMiddleware, LoggerMiddleware2)
+//       .exclude({ path: '/', method: RequestMethod.GET })
+//       .forRoutes(AppController);
+//   }
+// }

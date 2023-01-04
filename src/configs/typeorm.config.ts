@@ -7,5 +7,7 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   password: process.env.DB_PASSWORD || '1234',
   database: process.env.DB_NAME || 'wordbook',
   entities: [__dirname + '/../entities/*.entity.{js, ts}'],
-  synchronize: true,
+  synchronize: process.env.DB_SYNC === 'true',
 };
+
+// synchronize: true, // 개발시에만 사용

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Meaning } from 'src/entities/meaning.entity';
 import { Sentence } from 'src/entities/sentence.entity';
@@ -11,7 +11,7 @@ import { VocabularyService } from './vocabulary.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Sentence, Word, Meaning]), UsersModule],
   controllers: [VocabularyController],
-  providers: [VocabularyService, SentencesService],
+  providers: [VocabularyService, SentencesService, Logger],
   exports: [SentencesService, VocabularyService],
 })
 export class VocabularyModule {}

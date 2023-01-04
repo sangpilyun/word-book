@@ -1,18 +1,17 @@
 import { Gender } from '../entities/user.entity';
 import {
-  Max,
   Length,
   IsEmail,
   IsString,
   IsDateString,
-  IsEmpty,
   IsNotEmpty,
-  isEmpty,
   Matches,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { Authority } from 'src/entities/authority.entity';
 
 export class CreateUserDto {
+  @Transform((params) => params.value.trim())
   @IsNotEmpty()
   @IsString()
   @Length(4, 16)
