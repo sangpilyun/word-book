@@ -1,4 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  LoggerService,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSentenceDto } from 'src/dto/create-sentence.dto';
 import { UpdateSentenceDto } from 'src/dto/update-sentence.dto';
@@ -9,37 +16,66 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class SentencesService {
   constructor(
+    @Inject(Logger)
+    private readonly logger: LoggerService,
     @InjectRepository(Sentence)
     private readonly sentenceRepository: Repository<Sentence>,
     private readonly usersService: UsersService,
   ) {}
   async save(createSentenceDto: CreateSentenceDto): Promise<Sentence> {
-    const user = await this.usersService.findOne(createSentenceDto.userSeq);
+    try {
+      const user = await this.usersService.findOne(createSentenceDto.userSeq);
 
-    if (!user) {
-      throw new Error('sentence save error: user not found');
+      if (!user) {
+        throw new NotFoundException('sentence save error: user not found');
+      }
+
+      const sentence = new Sentence();
+      sentence.user = user;
+      sentence.sentence = createSentenceDto.sentence;
+      sentence.translation = createSentenceDto.translation;
+      sentence.translator = createSentenceDto.translator;
+
+      const response = await this.sentenceRepository.save(sentence);
+      this.logger.debug(
+        `DB: sentence save success \n${JSON.stringify(response, null, 2)}`,
+        this.constructor.name,
+      );
+
+      return response;
+    } catch (error) {
+      this.logger.error(error.message, error.stack, this.constructor.name);
+      throw new BadRequestException(error);
     }
-
-    const sentence = new Sentence();
-    sentence.user = user;
-    sentence.sentence = createSentenceDto.sentence;
-    sentence.translation = createSentenceDto.translation;
-    sentence.translator = createSentenceDto.translator;
-
-    const respose = await this.sentenceRepository.save(sentence);
-    return respose;
   }
 
   async findOne(id: number): Promise<Sentence> {
-    return await this.sentenceRepository.findOne({ where: { id } });
+    const sentence = await this.sentenceRepository.findOne({ where: { id } });
+    this.logger.debug(
+      `DB: sentence findOne success \n${sentence}`,
+      this.constructor.name,
+    );
+
+    return sentence;
   }
 
   async findAll(): Promise<Sentence[]> {
-    return await this.sentenceRepository.find();
+    const sentences = await this.sentenceRepository.find();
+    this.logger.debug(
+      `DB: sentences findAll success \n${sentences}`,
+      this.constructor.name,
+    );
+
+    return sentences;
   }
 
   async findWhere(where: object): Promise<Sentence[]> {
-    return await this.sentenceRepository.findBy(where);
+    const sentences = await this.sentenceRepository.find({ where });
+    this.logger.debug(
+      `DB: sentences findWhere success \n${sentences}`,
+      this.constructor.name,
+    );
+    return sentences;
   }
 
   async update(
@@ -51,16 +87,20 @@ export class SentencesService {
       updateSentenceDto,
     );
 
-    console.log(response);
+    this.logger.debug(
+      `DB: sentence update success \n${JSON.stringify(response, null, 2)}`,
+      this.constructor.name,
+    );
     return response;
   }
 
-  async temp() {
-    const where: object = {
-      isSearchForWord: false,
-    };
-    const response = await this.findWhere(where);
+  async delete(id: number): Promise<object> {
+    const response = await this.sentenceRepository.delete(id);
 
-    return where;
+    this.logger.debug(
+      `DB: sentence delete success \n${JSON.stringify(response, null, 2)}`,
+      this.constructor.name,
+    );
+    return response;
   }
 }

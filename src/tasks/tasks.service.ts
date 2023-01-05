@@ -6,8 +6,9 @@ import { SentencesService } from 'src/vocabulary/sentences.service';
 import { load } from 'cheerio';
 import { CreateWordDto } from 'src/dto/create-word.dto';
 import { CreateMeaningDto } from 'src/dto/create-meaning.dto';
-import { VocabularyService } from 'src/vocabulary/vocabulary.service';
+import { WordService } from 'src/vocabulary/word.service';
 import { CreateUserWordDto } from 'src/dto/create-user-word.dto';
+import { UserWordService } from 'src/vocabulary/user-word.service';
 
 @Injectable()
 export class TasksService {
@@ -15,7 +16,8 @@ export class TasksService {
 
   constructor(
     private readonly sentencesService: SentencesService,
-    private readonly vocabulariesService: VocabularyService,
+    private readonly wordService: WordService,
+    private readonly userWordService: UserWordService,
   ) {
     this.isRunningScraping = false;
   }
@@ -27,8 +29,6 @@ export class TasksService {
       console.log('이미 실행중입니다.');
       return;
     }
-
-    //puppeteer로 크롤링해서 단어 저장하는 스케줄러
 
     try {
       /** 단어를 검색하지 않은 문장들 가져오기 */
@@ -68,19 +68,13 @@ export class TasksService {
         /** 단어 검색하기 */
         for (const word of words.filter((word) => word.length > 0)) {
           const createUserWordDto = new CreateUserWordDto();
-          const isFound = await this.vocabulariesService.findOneWordByName(
-            word,
-          );
+          const isFound = await this.wordService.findOneByName(word);
 
           if (isFound) {
             createUserWordDto.userId = 1; //임시
             createUserWordDto.wordId = isFound.id;
-
             /** 유저 단어장에 추가 */
-            const res = await this.vocabulariesService.saveUserWord(
-              createUserWordDto,
-            );
-            console.log('유저 단어장에 추가', res);
+            const res = await this.userWordService.save(createUserWordDto);
 
             continue;
           }
@@ -90,18 +84,12 @@ export class TasksService {
 
           if (createWordDto) {
             /** 단어 DB에 저장 */
-            const responseWord = await this.vocabulariesService.save(
-              createWordDto,
-            );
-            console.log('단어 저장', word);
+            const responseWord = await this.wordService.save(createWordDto);
 
             createUserWordDto.userId = 1; //임시
             createUserWordDto.wordId = responseWord.id;
             /** 유저 단어장에 추가 */
-            const res = await this.vocabulariesService.saveUserWord(
-              createUserWordDto,
-            );
-            console.log('유저 단어장에 추가', res);
+            const res = await this.userWordService.save(createUserWordDto);
           }
         }
 

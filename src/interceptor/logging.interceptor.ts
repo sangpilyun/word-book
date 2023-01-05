@@ -19,10 +19,14 @@ export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const { method, url, body } = context.getArgByIndex(0);
     const className = context.getClass().name;
+    const contextName = `${LoggingInterceptor.name}-${className}`;
+    const isBodyEmpty = Object.keys(body).length === 0;
 
     this.logger.verbose(
-      `Request from ${method} ${url} ${JSON.stringify(body)}`,
-      className,
+      `Request from ${method} ${url} ${
+        isBodyEmpty ? '' : '\tbody: ' + JSON.stringify(body)
+      }`,
+      contextName,
     );
 
     const now = Date.now();
@@ -34,7 +38,7 @@ export class LoggingInterceptor implements NestInterceptor {
             `Response from ${method} ${url} \n response: ${JSON.stringify(
               data,
             )} \n time: ${Date.now() - now}ms`,
-            className,
+            contextName,
           ),
         ),
       );

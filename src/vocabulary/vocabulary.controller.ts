@@ -13,7 +13,8 @@ import { Get, Inject, Param, Query } from '@nestjs/common/decorators';
 import { CreateSentenceDto } from 'src/dto/create-sentence.dto';
 import { CreateWordDto } from 'src/dto/create-word.dto';
 import { SentencesService } from './sentences.service';
-import { VocabularyService } from './vocabulary.service';
+import { UserWordService } from './user-word.service';
+import { WordService } from './word.service';
 
 @Controller('vocabulary')
 export class VocabularyController {
@@ -21,7 +22,8 @@ export class VocabularyController {
     @Inject(Logger)
     private readonly logger: LoggerService,
     private readonly sentencesService: SentencesService,
-    private readonly vocabulariesService: VocabularyService,
+    private readonly wordService: WordService,
+    private readonly userWordService: UserWordService,
   ) {}
 
   @Post('sentence')
@@ -35,37 +37,36 @@ export class VocabularyController {
     return await this.sentencesService.findOne(id);
   }
 
-  @Post()
+  @Post('word')
   @UsePipes(ValidationPipe)
   async saveWord(@Body() createWordDto: CreateWordDto) {
-    return await this.vocabulariesService.save(createWordDto);
-  }
-
-  @Get()
-  async test() {
-    this.logger.log('type log');
-    return await this.vocabulariesService.findOneUserWord(1, 9);
+    return await this.wordService.save(createWordDto);
   }
 
   @Get('word/:id')
   async findOneWord(@Param('id') id: number) {
-    return await this.vocabulariesService.findOne(id);
+    return await this.wordService.findOne(id);
   }
 
-  @Get('word/cardTest')
+  @Get('user-word/cardTest')
   async findCardTestWords(
     @Query('userId') userId: number,
     @Query('count') count: number,
   ) {
-    return await this.vocabulariesService.findCardTestWords(userId, count);
+    return await this.userWordService.findCardTestWords(userId, count);
   }
 
-  @Get('word')
-  async findAllWords(
+  @Get('user-word')
+  async findAllUserWords(
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('userSeq', ParseIntPipe) userSeq: number,
   ) {
-    return await this.vocabulariesService.findAllWords(userSeq, offset, limit);
+    return await this.userWordService.findAll(userSeq, offset, limit);
+  }
+
+  @Get()
+  async test() {
+    return await this.userWordService.findOne(1, 9);
   }
 }
