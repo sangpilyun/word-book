@@ -11,7 +11,6 @@ import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import * as moment from 'moment';
 import * as bcrypt from 'bcrypt';
-import { LoginUserDto } from '../dto/login-user.dto';
 import { AuthorizationService } from './authorization/authorization.service';
 import { EmailService } from './email.service';
 
@@ -110,16 +109,5 @@ export class UsersService {
 
   async remove(seq: number) {
     return await this.userRepository.delete(seq);
-  }
-
-  async login(loginUserDto: LoginUserDto) {
-    const { id, password } = loginUserDto;
-    const user = await this.findOneById(id);
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return 'login success';
-    } else {
-      throw new UnauthorizedException('Invalid credentials');
-    }
   }
 }

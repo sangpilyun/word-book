@@ -10,6 +10,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { Get, Inject, Param, Query } from '@nestjs/common/decorators';
+import { Public } from 'src/decorators/public';
 import { CreateSentenceDto } from 'src/dto/create-sentence.dto';
 import { CreateWordDto } from 'src/dto/create-word.dto';
 import { SentencesService } from './sentences.service';
@@ -65,6 +66,7 @@ export class VocabularyController {
     return await this.userWordService.findAll(userSeq, offset, limit);
   }
 
+  @Public()
   @Get()
   async test() {
     return await this.userWordService.findOne(1, 9);
