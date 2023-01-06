@@ -10,6 +10,9 @@ import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { EtcModule } from './etc/etc.module';
 import { TasksModule } from './tasks/tasks.module';
 import { InterceptorModule } from './interceptor/interceptor.module';
+import { HttpModule } from '@nestjs/axios';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
 
 @Module({
   imports: [
@@ -26,9 +29,14 @@ import { InterceptorModule } from './interceptor/interceptor.module';
     EtcModule,
     TasksModule,
     InterceptorModule,
+    HttpModule.register({ timeout: 5 * 1000, maxRedirects: 5 }),
   ],
   controllers: [AppController],
-  providers: [AppService, Logger],
+  providers: [
+    AppService,
+    Logger,
+    { provide: APP_FILTER, useClass: HttpExceptionFilter }, // 글로벌 필터 등록
+  ],
 })
 export class AppModule {}
 
