@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { Get, Inject, Param, Query } from '@nestjs/common/decorators';
 import { Public } from 'src/decorators/public';
-import { CreateSentenceDto } from 'src/dto/create-sentence.dto';
-import { CreateWordDto } from 'src/dto/create-word.dto';
+import { CreateSentenceDto } from 'src/dtos/create-sentence.dto';
+import { CreateWordDto } from 'src/dtos/create-word.dto';
 import { SentencesService } from './sentences.service';
 import { UserWordService } from './user-word.service';
 import { WordService } from './word.service';

@@ -10,8 +10,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateAuthDto } from 'src/dto/create-auth.dto';
-import { UpdateAuthDto } from 'src/dto/update-auth.dto';
+import { CreateAuthDto } from 'src/dtos/create-auth.dto';
+import { UpdateAuthDto } from 'src/dtos/update-auth.dto';
 import { AuthorizationService } from './authorization.service';
 
 @Controller('authorization')

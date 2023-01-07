@@ -4,10 +4,10 @@ import puppeteer from 'puppeteer';
 import { sleep } from 'src/utils/utils';
 import { SentencesService } from 'src/vocabulary/sentences.service';
 import { load } from 'cheerio';
-import { CreateWordDto } from 'src/dto/create-word.dto';
-import { CreateMeaningDto } from 'src/dto/create-meaning.dto';
+import { CreateWordDto } from 'src/dtos/create-word.dto';
+import { CreateMeaningDto } from 'src/dtos/create-meaning.dto';
 import { WordService } from 'src/vocabulary/word.service';
-import { CreateUserWordDto } from 'src/dto/create-user-word.dto';
+import { CreateUserWordDto } from 'src/dtos/create-user-word.dto';
 import { UserWordService } from 'src/vocabulary/user-word.service';
 
 @Injectable()

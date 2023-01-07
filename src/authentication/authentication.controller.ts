@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
-import { LoginUserDto } from '../dto/login-user.dto';
+import { LoginUserDto } from '../dtos/login-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { Public } from 'src/decorators/public';
 import { LocalAuthGuard } from './guards/local.auth.guard';

@@ -7,8 +7,8 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateSentenceDto } from 'src/dto/create-sentence.dto';
-import { UpdateSentenceDto } from 'src/dto/update-sentence.dto';
+import { CreateSentenceDto } from 'src/dtos/create-sentence.dto';
+import { UpdateSentenceDto } from 'src/dtos/update-sentence.dto';
 import { Sentence } from 'src/entities/sentence.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';

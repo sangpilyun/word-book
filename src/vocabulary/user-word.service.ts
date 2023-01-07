@@ -5,8 +5,8 @@ import {
   Logger,
   LoggerService,
 } from '@nestjs/common';
-import { CreateUserWordDto } from 'src/dto/create-user-word.dto';
-import { UpdateUserWordDto } from 'src/dto/update-user-word.dto';
+import { CreateUserWordDto } from 'src/dtos/create-user-word.dto';
+import { UpdateUserWordDto } from 'src/dtos/update-user-word.dto';
 import { UserWord } from 'src/entities/user-word.entity';
 import { Word } from 'src/entities/word.entity';
 import { UsersService } from 'src/users/users.service';

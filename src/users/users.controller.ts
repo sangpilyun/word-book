@@ -11,9 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { LoginUserDto } from '../dto/login-user.dto';
+import { CreateUserDto } from '../dtos/create-user.dto';
+import { UpdateUserDto } from '../dtos/update-user.dto';
+import { LoginUserDto } from '../dtos/login-user.dto';
 import { Public } from 'src/decorators/public';
 
 @UseGuards()

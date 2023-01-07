@@ -5,8 +5,8 @@ import {
   Logger,
   LoggerService,
 } from '@nestjs/common';
-import { CreateMeaningDto } from 'src/dto/create-meaning.dto';
-import { CreateWordDto } from 'src/dto/create-word.dto';
+import { CreateMeaningDto } from 'src/dtos/create-meaning.dto';
+import { CreateWordDto } from 'src/dtos/create-word.dto';
 import { Meaning } from 'src/entities/meaning.entity';
 import { Word } from 'src/entities/word.entity';
 import { UsersService } from 'src/users/users.service';
