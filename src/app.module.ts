@@ -13,6 +13,7 @@ import { InterceptorModule } from './interceptor/interceptor.module';
 import { HttpModule } from '@nestjs/axios';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { HealthCheckModule } from './health-check/health-check.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { HttpExceptionFilter } from './filters/http-exception.filter';
     TasksModule,
     InterceptorModule,
     HttpModule.register({ timeout: 5 * 1000, maxRedirects: 5 }),
+    HealthCheckModule,
   ],
   controllers: [AppController],
   providers: [
