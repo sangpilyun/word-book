@@ -5,7 +5,7 @@ import { UsersModule } from './users/users.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { typeORMConfig } from './configs/typeorm.config';
+import { getTypeOrmConfig } from './configs/typeorm.config';
 import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { EtcModule } from './etc/etc.module';
 import { TasksModule } from './tasks/tasks.module';
@@ -17,13 +17,13 @@ import { HealthCheckModule } from './health-check/health-check.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(typeORMConfig),
     ConfigModule.forRoot({
       envFilePath:
         process.env.NODE_ENV === 'development'
           ? '.env.development'
           : '.env.production',
     }),
+    TypeOrmModule.forRoot(getTypeOrmConfig()),
     UsersModule,
     AuthenticationModule,
     VocabularyModule,
