@@ -9,6 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './strategies/local.strategy';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { LocalStrategy } from './strategies/local.strategy';
       }),
     }),
     UsersModule,
+    CqrsModule,
   ],
   controllers: [AuthenticationController],
   providers: [

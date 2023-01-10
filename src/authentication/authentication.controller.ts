@@ -12,15 +12,16 @@ import {
 import { AuthenticationService } from './authentication.service';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { LoginUserDto } from '../dtos/login-user.dto';
-import { UsersService } from 'src/users/users.service';
 import { Public } from 'src/decorators/public';
 import { LocalAuthGuard } from './guards/local.auth.guard';
+import { QueryBus } from '@nestjs/cqrs';
+import { GetUserByIdQuery } from 'src/users/queries/impl/get-user-info-by-id.query';
 
 @Controller('auth')
 export class AuthenticationController {
   constructor(
     private readonly authsService: AuthenticationService,
-    private readonly userService: UsersService,
+    private readonly queryBus: QueryBus,
   ) {}
 
   // @UseGuards(AuthGuard('local')) 보다는 아래와 같이 사용하는 것이 좋다.
@@ -33,7 +34,9 @@ export class AuthenticationController {
     @Body() loginUserDto: LoginUserDto,
   ): Promise<{ accessToken: string }> {
     const { id } = loginUserDto;
-    const user = await this.userService.findOneById(id);
+    const query = new GetUserByIdQuery(id);
+    const user = await this.queryBus.execute(query);
+    console.log(user);
     const token = await this.authsService.login(user);
     return token;
   }
@@ -47,6 +50,8 @@ export class AuthenticationController {
 
   @Get('profile')
   getProfile(@Query('id') id: string) {
-    return this.userService.findOneById(id);
+    const query = new GetUserByIdQuery(id);
+
+    return this.queryBus.execute(query);
   }
 }

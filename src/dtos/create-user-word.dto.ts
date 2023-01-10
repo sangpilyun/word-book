@@ -7,5 +7,5 @@ export class CreateUserWordDto {
 
   @IsNotEmpty()
   @IsNumber()
-  userId: number;
+  userSeq: number;
 }

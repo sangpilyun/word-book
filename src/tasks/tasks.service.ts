@@ -71,7 +71,8 @@ export class TasksService {
           const isFound = await this.wordService.findOneByName(word);
 
           if (isFound) {
-            createUserWordDto.userId = 1; //임시
+            console.log('sentenceObj', sentenceObj);
+            createUserWordDto.userSeq = sentenceObj.user.seq;
             createUserWordDto.wordId = isFound.id;
             /** 유저 단어장에 추가 */
             const res = await this.userWordService.save(createUserWordDto);
@@ -86,7 +87,7 @@ export class TasksService {
             /** 단어 DB에 저장 */
             const responseWord = await this.wordService.save(createWordDto);
 
-            createUserWordDto.userId = 1; //임시
+            createUserWordDto.userSeq = sentenceObj.user.seq;
             createUserWordDto.wordId = responseWord.id;
             /** 유저 단어장에 추가 */
             const res = await this.userWordService.save(createUserWordDto);

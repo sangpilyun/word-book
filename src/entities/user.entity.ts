@@ -13,6 +13,7 @@ import {
   OneToMany,
   CreateDateColumn,
   DeleteDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { UserWord } from './user-word.entity';
 
@@ -47,8 +48,14 @@ export class User extends BaseEntity {
   @CreateDateColumn({ type: 'datetime' })
   createdDate: Date;
 
+  @UpdateDateColumn({ type: 'datetime' })
+  updatedDate: Date;
+
   @DeleteDateColumn({ type: 'datetime' })
   deletedDate: Date;
+
+  @Column('uuid', { nullable: true })
+  signUpVerificationToken: string;
 
   @ManyToMany(() => Authority, (autority) => autority.users, {
     cascade: true,

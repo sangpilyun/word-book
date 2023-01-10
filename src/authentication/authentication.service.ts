@@ -8,16 +8,17 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto } from '../dtos/login-user.dto';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from 'src/users/users.service';
 import { User } from 'src/entities/user.entity';
+import { QueryBus } from '@nestjs/cqrs';
+import { GetUserByIdQuery } from 'src/users/queries/impl/get-user-info-by-id.query';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     @Inject(Logger)
     private readonly logger: LoggerService,
-    private jwtService: JwtService,
-    private usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async login(user: User): Promise<any> {
@@ -32,7 +33,8 @@ export class AuthenticationService {
   async validateUser(id: string, password: string): Promise<any> {
     this.logger.verbose(`validateUser: ${id}`, this.constructor.name);
 
-    const user = await this.usersService.findOneById(id);
+    const query = new GetUserByIdQuery(id);
+    const user = await this.queryBus.execute(query);
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;

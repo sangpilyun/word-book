@@ -6,11 +6,12 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { QueryBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSentenceDto } from 'src/dtos/create-sentence.dto';
 import { UpdateSentenceDto } from 'src/dtos/update-sentence.dto';
 import { Sentence } from 'src/entities/sentence.entity';
-import { UsersService } from 'src/users/users.service';
+import { GetUserInfoQuery } from 'src/users/queries/impl/get-user-info.query';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -20,11 +21,12 @@ export class SentencesService {
     private readonly logger: LoggerService,
     @InjectRepository(Sentence)
     private readonly sentenceRepository: Repository<Sentence>,
-    private readonly usersService: UsersService,
+    private readonly queryBus: QueryBus,
   ) {}
   async save(createSentenceDto: CreateSentenceDto): Promise<Sentence> {
     try {
-      const user = await this.usersService.findOne(createSentenceDto.userSeq);
+      const query = new GetUserInfoQuery(createSentenceDto.userSeq);
+      const user = await this.queryBus.execute(query);
 
       if (!user) {
         throw new NotFoundException('sentence save error: user not found');

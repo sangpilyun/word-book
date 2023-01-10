@@ -30,7 +30,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
-  @Length(8, 20)
+  @Length(0, 20)
   name: string;
 
   @IsNotEmpty()
@@ -50,7 +50,6 @@ export class CreateUserDto {
   })
   tel: string;
 
-  @IsDateString({ always: true })
   createdDate: Date;
 
   deletedDate: Date;

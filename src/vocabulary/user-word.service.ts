@@ -5,11 +5,12 @@ import {
   Logger,
   LoggerService,
 } from '@nestjs/common';
+import { QueryBus } from '@nestjs/cqrs';
 import { CreateUserWordDto } from 'src/dtos/create-user-word.dto';
 import { UpdateUserWordDto } from 'src/dtos/update-user-word.dto';
 import { UserWord } from 'src/entities/user-word.entity';
 import { Word } from 'src/entities/word.entity';
-import { UsersService } from 'src/users/users.service';
+import { GetUserInfoQuery } from 'src/users/queries/impl/get-user-info.query';
 import { DataSource } from 'typeorm';
 import { WordService } from './word.service';
 
@@ -19,8 +20,8 @@ export class UserWordService {
     @Inject(Logger)
     private readonly logger: LoggerService,
     private readonly dataSource: DataSource,
-    private readonly usersService: UsersService,
     private readonly wordService: WordService,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async findAll(userSeq, offset, limit) {
@@ -79,7 +80,8 @@ export class UserWordService {
       this.constructor.name,
     );
 
-    const user = await this.usersService.findOne(createUserWordDto.userId);
+    const query = new GetUserInfoQuery(createUserWordDto.userSeq);
+    const user = await this.queryBus.execute(query);
     const word = await this.wordService.findOne(createUserWordDto.wordId);
 
     try {
