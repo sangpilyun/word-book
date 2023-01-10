@@ -22,13 +22,26 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     /** 알 수 없는 예외는 InternalServerErrorException으로 변환 */
     const isHttpException = exception instanceof HttpException;
+    let errorMessage = '';
+
     if (!isHttpException) {
+      errorMessage = ': ' + exception.message;
       exception = new InternalServerErrorException();
     }
 
-    const response = (exception as HttpException).getResponse();
+    let response = (exception as HttpException).getResponse();
     const status = (exception as HttpException).getStatus();
     const stack = exception.stack;
+
+    const responseType = typeof response;
+    switch (responseType) {
+      case 'string':
+        response += errorMessage;
+        break;
+      case 'object':
+        response['message'] += errorMessage;
+        break;
+    }
 
     this.logger.error(response, stack, this.constructor.name);
 
