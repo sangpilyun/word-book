@@ -18,7 +18,7 @@ export function getFormat(isColors = false) {
     winston.format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    nestWinstonModuleUtilities.format.nestLike('MyApp', {
+    nestWinstonModuleUtilities.format.nestLike(process.env.APP_NAME, {
       prettyPrint: true,
       colors: isColors,
     }),
