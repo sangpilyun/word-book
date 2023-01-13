@@ -6,6 +6,7 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserCommand } from '../impl/create-user.command';
 import { UserEntity } from 'src/users/infra/db/entity/user.entity';
+import { UserCreatedEvent } from 'src/users/domain/user-created.event';
 
 @Injectable()
 @CommandHandler(CreateUserCommand)
@@ -14,6 +15,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly dataSource: DataSource,
+    private readonly eventBus: EventBus,
   ) {}
   async execute(command: CreateUserCommand): Promise<any> {
     const { createUserDto } = command;
@@ -28,6 +30,9 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     user.password = await this.bcryptPassword(user.password);
     user.signUpVerificationToken = uuid.v4();
 
+    this.eventBus.publish(
+      new UserCreatedEvent(user.email, user.signUpVerificationToken),
+    );
     await this.saveUserUsingTransaction(user);
 
     return user;
