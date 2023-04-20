@@ -51,7 +51,7 @@ export class CreateUserDto {
   tel: string;
 
   createdDate: Date;
-
+  updatedDate: Date;
   deletedDate: Date;
 
   authoritys: Authority[];
