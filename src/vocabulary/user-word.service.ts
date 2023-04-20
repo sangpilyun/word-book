@@ -10,7 +10,7 @@ import { CreateUserWordDto } from 'src/dtos/create-user-word.dto';
 import { UpdateUserWordDto } from 'src/dtos/update-user-word.dto';
 import { UserWord } from 'src/entities/user-word.entity';
 import { Word } from 'src/entities/word.entity';
-import { GetUserInfoQuery } from 'src/users/queries/impl/get-user-info.query';
+import { GetUserInfoQuery } from 'src/users/application/query/impl/get-user-info.query';
 import { DataSource } from 'typeorm';
 import { WordService } from './word.service';
 

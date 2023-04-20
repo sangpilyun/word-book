@@ -1,4 +1,4 @@
-import { User } from 'src/entities/user.entity';
+import { UserEntity } from 'src/users/infra/db/entity/user.entity';
 import {
   PrimaryGeneratedColumn,
   BaseEntity,
@@ -22,7 +22,7 @@ export class Authority extends BaseEntity {
   @Column('varchar', { length: 20 })
   name: string;
 
-  @ManyToMany(() => User, (user) => user.authorities)
+  @ManyToMany(() => UserEntity, (user) => user.authorities)
   @JoinTable()
-  users: User[];
+  users: UserEntity[];
 }

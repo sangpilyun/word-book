@@ -6,11 +6,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginUserDto } from '../dtos/login-user.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/entities/user.entity';
 import { QueryBus } from '@nestjs/cqrs';
-import { GetUserByIdQuery } from 'src/users/queries/impl/get-user-info-by-id.query';
+import { UserEntity } from 'src/users/infra/db/entity/user.entity';
+import { GetUserByIdQuery } from 'src/users/application/query/impl/get-user-info-by-id.query';
 
 @Injectable()
 export class AuthenticationService {
@@ -21,7 +20,7 @@ export class AuthenticationService {
     private readonly queryBus: QueryBus,
   ) {}
 
-  async login(user: User): Promise<any> {
+  async login(user: UserEntity): Promise<any> {
     const { id, email } = user;
     const payload = { id: user.id, name: user.name };
     const token = { access_token: this.jwtService.sign(payload) };

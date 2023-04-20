@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSentenceDto } from 'src/dtos/create-sentence.dto';
 import { UpdateSentenceDto } from 'src/dtos/update-sentence.dto';
 import { Sentence } from 'src/entities/sentence.entity';
-import { GetUserInfoQuery } from 'src/users/queries/impl/get-user-info.query';
+import { GetUserInfoQuery } from 'src/users/application/query/impl/get-user-info.query';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -72,7 +72,10 @@ export class SentencesService {
   }
 
   async findWhere(where: object): Promise<Sentence[]> {
-    const sentences = await this.sentenceRepository.find({ where });
+    const sentences = await this.sentenceRepository.find({
+      where,
+      relations: ['user'],
+    });
     this.logger.debug(
       `DB: sentences findWhere success \n${sentences}`,
       this.constructor.name,

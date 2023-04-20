@@ -15,7 +15,7 @@ import { LoginUserDto } from '../dtos/login-user.dto';
 import { Public } from 'src/decorators/public';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 import { QueryBus } from '@nestjs/cqrs';
-import { GetUserByIdQuery } from 'src/users/queries/impl/get-user-info-by-id.query';
+import { GetUserByIdQuery } from 'src/users/application/query/impl/get-user-info-by-id.query';
 
 @Controller('auth')
 export class AuthenticationController {

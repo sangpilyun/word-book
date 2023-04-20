@@ -1,4 +1,4 @@
-import { User } from 'src/entities/user.entity';
+import { UserEntity } from 'src/users/infra/db/entity/user.entity';
 import {
   BaseEntity,
   Column,
@@ -29,11 +29,11 @@ export class Sentence extends BaseEntity {
   @CreateDateColumn({ type: 'datetime' })
   createdDate: Date;
 
-  @ManyToOne(() => User, (user) => user.sentences, { nullable: false })
+  @ManyToOne(() => UserEntity, (user) => user.sentences, { nullable: false })
   @JoinColumn({
     name: 'userSeq',
     referencedColumnName: 'seq',
     foreignKeyConstraintName: 'FK_SENTENCE',
   })
-  user: User;
+  user: UserEntity;
 }

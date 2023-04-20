@@ -1,3 +1,4 @@
+import { UserEntity } from 'src/users/infra/db/entity/user.entity';
 import {
   BaseEntity,
   Column,
@@ -9,7 +10,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Sentence } from './sentence.entity';
-import { User } from './user.entity';
 import { Word } from './word.entity';
 
 @Entity()
@@ -17,13 +17,13 @@ export class UserWord extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.userWords)
+  @ManyToOne(() => UserEntity, (user) => user.userWords)
   @JoinColumn({
     name: 'userSeq',
     referencedColumnName: 'seq',
     foreignKeyConstraintName: 'FK_USER_WORD_USER',
   })
-  user: User;
+  user: UserEntity;
 
   @ManyToOne(() => Word, (word) => word.userWords)
   @JoinColumn({
