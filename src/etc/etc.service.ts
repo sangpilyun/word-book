@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Sentence } from 'src/entities/sentence.entity';
 import { DataSource, Repository } from 'typeorm';
 import { SentencesService } from 'src/vocabulary/sentences.service';
-import { TranslateDto } from 'src/dtos/Translate.dto';
+import { TranslateDto } from 'src/dtos/translate.dto';
 
 @Injectable()
 export class EtcService {

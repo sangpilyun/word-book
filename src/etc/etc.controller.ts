@@ -7,7 +7,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { Public } from 'src/decorators/public';
-import { TranslateDto } from 'src/dtos/Translate.dto';
+import { TranslateDto } from 'src/dtos/translate.dto';
 import { EtcService } from './etc.service';
 
 @Controller('etc')
