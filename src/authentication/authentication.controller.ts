@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { LoginUserDto } from '../dtos/login-user.dto';
@@ -16,6 +6,7 @@ import { Public } from 'src/decorators/public';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 import { QueryBus } from '@nestjs/cqrs';
 import { GetUserByIdQuery } from 'src/users/application/query/impl/get-user-info-by-id.query';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthenticationController {
@@ -36,8 +27,8 @@ export class AuthenticationController {
     const { id } = loginUserDto;
     const query = new GetUserByIdQuery(id);
     const user = await this.queryBus.execute(query);
-    console.log(user);
     const token = await this.authsService.login(user);
+
     return token;
   }
 
@@ -49,7 +40,8 @@ export class AuthenticationController {
   }
 
   @Get('profile')
-  getProfile(@Query('id') id: string) {
+  getProfile(@User() user) {
+    const { id } = user;
     const query = new GetUserByIdQuery(id);
 
     return this.queryBus.execute(query);
