@@ -108,6 +108,10 @@ export class TasksService {
     console.log('크롤링 완료');
   }
 
+  /* @@TODO 리눅스환경(?) 에서 실행시 에러남
+    2023-05-14 23:30:01 BadRequestException: Puppeteer error: Error: Failed to launch the browser process!
+    2023-05-14 23:30:01 /root/.cache/puppeteer/chrome/linux-1069273/chrome-linux/chrome: error while loading shared libraries: libnss3.so: cannot open shared object file: No such file or directory
+  */
   async getHtml(url: string): Promise<string> {
     try {
       const browser = await puppeteer.launch({ headless: true });
