@@ -22,4 +22,5 @@ EXPOSE 3002
 # 앱을 실행하기 위한 스크립트 실행
 # CMD ["npm", "start" ]
 
-CMD [ "node", "loop.js"]
+CMD ["npm","run","start:stage" ]
+
